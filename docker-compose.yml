@@ -1,0 +1,29 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - MQTT_URL=mqtt://mosquitto:1883
+    depends_on:
+      - mosquitto
+
+  simulator:
+    build:
+      context: .
+      dockerfile: ./robot-simulator/Dockerfile
+    environment:
+      - MQTT_URL=mqtt://mosquitto:1883
+    depends_on:
+      - mosquitto
+      - backend

@@ -1,0 +1,14 @@
+{
+  "name": "fleet-management-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "robot-simulator"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces"
+  }
+}
