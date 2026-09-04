@@ -1,3 +1,13 @@
+x-robot-base: &robot-base
+  build:
+    context: .
+    dockerfile: ./robot-simulator/Dockerfile
+  depends_on:
+    - mosquitto
+
+x-robot-env: &robot-env
+  MQTT_URL: mqtt://mosquitto:1883
+
 services:
   mosquitto:
     image: eclipse-mosquitto:2
@@ -13,17 +23,55 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - PORT=3000
-      - MQTT_URL=mqtt://mosquitto:1883
+      PORT: "3000"
+      MQTT_URL: mqtt://mosquitto:1883
     depends_on:
       - mosquitto
 
-  simulator:
-    build:
-      context: .
-      dockerfile: ./robot-simulator/Dockerfile
+  robot-r1:
+    <<: *robot-base
     environment:
-      - MQTT_URL=mqtt://mosquitto:1883
-    depends_on:
-      - mosquitto
-      - backend
+      <<: *robot-env
+      ROBOT_ID: r1
+
+  robot-r2:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r2
+
+  robot-r3:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r3
+
+  robot-r4:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r4
+
+  robot-r5:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r5
+
+  robot-r6:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r6
+
+  robot-r7:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r7
+
+  robot-r8:
+    <<: *robot-base
+    environment:
+      <<: *robot-env
+      ROBOT_ID: r8
