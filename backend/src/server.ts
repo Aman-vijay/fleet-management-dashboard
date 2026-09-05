@@ -1,9 +1,11 @@
 import Fastify from "fastify";
+import websocket from "@fastify/websocket";
 import { loadConfig } from "./config.js";
 import { loadRobotTypes } from "./domain/events.js";
 import { registerRobotRoutes } from "./http/robots.js";
 import { startMqttConsumer } from "./mqtt/consumer.js";
 import { FleetState } from "./state/fleet-state.js";
+import { registerRobotStream } from "./websocket/stream.js";
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -13,10 +15,12 @@ async function main(): Promise<void> {
   const state = new FleetState();
   startMqttConsumer({ mqttUrl: config.mqttUrl, state, robotTypes });
 
-  // Routes read the same FleetState the MQTT consumer writes — one source of truth.
+  // Routes and stream read the same FleetState the MQTT consumer writes — one source of truth.
   const app = Fastify();
   app.decorate("fleet", state);
+  await app.register(websocket);
   registerRobotRoutes(app, state);
+  registerRobotStream(app, state);
   await app.listen({ port: config.port, host: "0.0.0.0" });
   console.log(`backend: listening on ${config.port}`);
 
