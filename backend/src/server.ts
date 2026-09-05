@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import { loadConfig } from "./config.js";
 import { loadRobotTypes } from "./domain/events.js";
+import { registerRobotRoutes } from "./http/robots.js";
 import { startMqttConsumer } from "./mqtt/consumer.js";
 import { FleetState } from "./state/fleet-state.js";
 
@@ -12,9 +13,10 @@ async function main(): Promise<void> {
   const state = new FleetState();
   startMqttConsumer({ mqttUrl: config.mqttUrl, state, robotTypes });
 
-  // REST + WebSocket land in Phase 3; Fastify listens now so the service is up.
+  // Routes read the same FleetState the MQTT consumer writes — one source of truth.
   const app = Fastify();
   app.decorate("fleet", state);
+  registerRobotRoutes(app, state);
   await app.listen({ port: config.port, host: "0.0.0.0" });
   console.log(`backend: listening on ${config.port}`);
 
