@@ -3,10 +3,14 @@ x-robot-base: &robot-base
     context: .
     dockerfile: ./robot-simulator/Dockerfile
   depends_on:
-    - mosquitto
+    mosquitto:
+      condition: service_healthy
+    backend:
+      condition: service_started
 
 x-robot-env: &robot-env
   MQTT_URL: mqtt://mosquitto:1883
+  REPLAY_SPEED: ${REPLAY_SPEED:-1}
 
 services:
   mosquitto:
@@ -15,6 +19,11 @@ services:
       - "1883:1883"
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-h", "localhost", "-t", "$$SYS/broker/uptime", "-C", "1", "-W", "3"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
 
   backend:
     build:
@@ -26,7 +35,8 @@ services:
       PORT: "3000"
       MQTT_URL: mqtt://mosquitto:1883
     depends_on:
-      - mosquitto
+      mosquitto:
+        condition: service_healthy
 
   robot-r1:
     <<: *robot-base

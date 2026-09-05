@@ -6,6 +6,7 @@ COPY robot-simulator/package.json ./robot-simulator/package.json
 RUN npm ci
 COPY backend/tsconfig.json ./backend/tsconfig.json
 COPY backend/src ./backend/src
+COPY data ./data
 WORKDIR /app/backend
 RUN npm run build
 EXPOSE 3000
