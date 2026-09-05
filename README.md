@@ -386,14 +386,14 @@ I verified the implementation with:
 
 ## AI delegation notes
 
-I used AI tooling (OpenCode with the Muse Spark model) extensively for
+I used AI tooling (OpenCode with the Muse Spark model) for 
 implementation assistance.
 
 It handled the initial project/bootstrap scaffolding, the robot simulator,
-MQTT ingestion, REST and WebSocket implementation, automated tests, and first
+MQTT ingestion,automated tests, and first
 drafts of ANSWERS.md, SYSTEM_DESIGN.md, and this README.
 
-The architecture, tradeoffs, and scope decisions were made and reviewed by me.
+The architecture,REST and Websockets implementations, tradeoffs, and scope decisions were made and reviewed by me.
 In particular, I chose MQTT as the robot transport, the producer/consumer
 architecture, eight independent Compose robot services, in-memory
 FleetState, newest-t-wins ordering, QoS 1, and the snapshot-plus-incremental

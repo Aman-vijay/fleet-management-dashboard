@@ -16,12 +16,12 @@ MQTT consumer needs no changes. The feature would land as one new module plus
 tests, touching no existing behavior — which is the payoff of keeping state,
 ingest, and serving as three separate units with `FleetState` in the middle.
 
-## 2. From 8 robots to 500
+## 2. What happens when robot goes from 8 robots to 500
 
 The first thing to break is the simulator topology, not the backend. Five
 hundred near-identical compose services in `docker-compose.yml` becomes
 unmanageable long before anything technical fails; that file's one-service-per-
-robot structure was chosen for 8 robots and spec-literal process isolation, and
+robot structure was chosen for 8 robots and specliteral process isolation, and
 at 500 it would be replaced by one container image parameterized by `ROBOT_ID`
 with a small launcher (or compose `--scale` on a single robot service). The
 backend itself degrades gracefully: `FleetState` is a `Map` (O(1) updates,
@@ -53,7 +53,7 @@ fresh snapshot rather than accumulating backlog.
 
 ## 4. A robot goes down mid-task and stops responding
 
-Today the rest of the system does nothing special — and that is a known,
+Today the rest of the system does nothing special ,and that is a known,
 documented gap, not an oversight: `FleetState` keeps the robot's last-known
 state with its `lastEventTime` frozen, and both REST and WS keep serving it
 indistinguishably from live data. The feed itself cannot be the detector,
@@ -67,7 +67,7 @@ system *should* do about it is a product call the brief deliberately leaves
 open (status semantics are undefined): at minimum, visually distinguish
 stale-but-last-known from live so the operator never mistakes a frozen robot
 for a stationary one; never invent telemetry for it. Chosen threshold and
-surfacing would be defended the same way current status handling is — as an
+surfacing would be defended the same way current status handling is as an
 explicit operator-facing decision, not a protocol inference.
 
 ## 5. Slow or unreliable robot↔backend link: late, out-of-order, or missing updates
